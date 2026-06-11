@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   Layers,
   LayoutDashboard,
@@ -80,7 +80,7 @@ function SidebarNav({ collapsed }: { collapsed: boolean }) {
           </button>
         );
 
-        if (active) return <span key={label}>{item}</span>;
+        if (active) return <Fragment key={label}>{item}</Fragment>;
 
         return (
           <Tooltip key={label}>
