@@ -1,6 +1,7 @@
 import { CircleUserRound } from "lucide-react";
 
 import { PlaceholderTab } from "@/components/PlaceholderTab";
+import { Toaster } from "@/components/ui/sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { UsersTab } from "@/features/users/UsersTab";
@@ -54,6 +55,7 @@ function App() {
             ))}
           </Tabs>
         </main>
+        <Toaster />
       </div>
     </TooltipProvider>
   );

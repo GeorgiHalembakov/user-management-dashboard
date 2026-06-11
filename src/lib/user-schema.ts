@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ALL_TEAMS } from "@/types/user";
+import { ALL_TEAMS, type Team } from "@/types/user";
 
 /**
  * Validation schema for Add/Edit User form.
@@ -37,7 +37,7 @@ export const userFormSchema = z.object({
       "Enter a valid phone number, e.g. +359 88 123 4567"
     ),
   teams: z
-    .array(z.enum(ALL_TEAMS as [string, ...string[]]))
+    .array(z.enum(ALL_TEAMS as [Team, ...Team[]]))
     .min(1, "Assign the user to at least one team"),
   role: z.enum(["Admin", "User"], { error: "Select a role" }),
   status: z.enum(["Active", "Inactive"], { error: "Select a status" }),
@@ -45,6 +45,8 @@ export const userFormSchema = z.object({
 });
 
 export type UserFormValues = z.infer<typeof userFormSchema>;
+/** Pre-validation shape (photo may be "" before the transform maps it to null). */
+export type UserFormInput = z.input<typeof userFormSchema>;
 
 export const emptyUserFormValues: UserFormValues = {
   firstName: "",

@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Plus, Search, X } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Command,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   InputGroup,
   InputGroupAddon,
@@ -16,18 +9,14 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ALL_TEAMS, type Role, type Status, type Team } from "@/types/user";
+import type { Role, Status } from "@/types/user";
+import { TeamMultiSelect } from "./TeamMultiSelect";
 import { EMPTY_FILTERS, isAnyFilterActive, type UserFilters } from "./user-filters";
 
 const SEARCH_DEBOUNCE_MS = 250;
@@ -52,13 +41,6 @@ export function UserToolbar({ filters, onFiltersChange, onAddUser }: UserToolbar
     );
     return () => clearTimeout(timer);
   }, [query, filters, onFiltersChange]);
-
-  const toggleTeam = (team: Team) => {
-    const teams = filters.teams.includes(team)
-      ? filters.teams.filter((t) => t !== team)
-      : [...filters.teams, team];
-    onFiltersChange({ ...filters, teams });
-  };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -86,32 +68,13 @@ export function UserToolbar({ filters, onFiltersChange, onAddUser }: UserToolbar
         )}
       </InputGroup>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline">
-            {filters.teams.length > 0 ? `Teams (${filters.teams.length})` : "Teams"}
-            <ChevronDown className="text-muted-foreground" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-48 p-0" align="start">
-          <Command>
-            <CommandList>
-              <CommandGroup>
-                {ALL_TEAMS.map((team) => (
-                  <CommandItem key={team} onSelect={() => toggleTeam(team)}>
-                    <Checkbox
-                      checked={filters.teams.includes(team)}
-                      tabIndex={-1}
-                      className="pointer-events-none"
-                    />
-                    {team}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
+      <TeamMultiSelect
+        selected={filters.teams}
+        onChange={(teams) => onFiltersChange({ ...filters, teams })}
+        triggerLabel={
+          filters.teams.length > 0 ? `Teams (${filters.teams.length})` : "Teams"
+        }
+      />
 
       <Select
         value={filters.status}
@@ -148,7 +111,15 @@ export function UserToolbar({ filters, onFiltersChange, onAddUser }: UserToolbar
         </Button>
       )}
 
-      <Button onClick={onAddUser} className="ml-auto">
+      <Button
+        className="ml-auto"
+        onClick={(e) => {
+          // macOS browsers don't focus buttons on click; focus explicitly so
+          // the dialog's focus trap can return focus here on close.
+          e.currentTarget.focus();
+          onAddUser();
+        }}
+      >
         <Plus />
         Add User
       </Button>
