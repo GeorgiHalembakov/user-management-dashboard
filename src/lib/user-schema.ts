@@ -39,12 +39,8 @@ export const userFormSchema = z.object({
   teams: z
     .array(z.enum(ALL_TEAMS as [string, ...string[]]))
     .min(1, "Assign the user to at least one team"),
-  role: z.enum(["Admin", "User"], {
-    errorMap: () => ({ message: "Select a role" }),
-  }),
-  status: z.enum(["Active", "Inactive"], {
-    errorMap: () => ({ message: "Select a status" }),
-  }),
+  role: z.enum(["Admin", "User"], { error: "Select a role" }),
+  status: z.enum(["Active", "Inactive"], { error: "Select a status" }),
   photo: z.string().url("Photo must be a valid URL").nullable().or(z.literal("").transform(() => null)),
 });
 
