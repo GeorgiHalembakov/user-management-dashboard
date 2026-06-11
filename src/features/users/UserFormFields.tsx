@@ -23,10 +23,11 @@ function fieldAria(id: string, error: string | undefined) {
   };
 }
 
+// Always rendered (empty when valid) so the reserved line keeps the dialog
+// from shifting when a message appears.
 function FieldError({ id, error }: { id: string; error: string | undefined }) {
-  if (!error) return null;
   return (
-    <p id={`${id}-error`} className="text-sm text-destructive">
+    <p id={`${id}-error`} className="min-h-5 text-sm text-destructive">
       {error}
     </p>
   );
