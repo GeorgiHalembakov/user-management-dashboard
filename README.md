@@ -2,7 +2,7 @@
 
 Admin prototype rebuilt from a deliberately flawed AI-generated wireframe: audit the flaws, fix them, ship a polished accessible mock — with heavy AI leverage, documented.
 
-**Live demo:** https://YOUR-APP.vercel.app
+**Live demo:** https://georgi-halembakov-user-management-dashboard.vercel.app/
 
 **Stack:** Vite · React 18 · TypeScript (strict) · Tailwind v4 · shadcn/ui (Radix, Nova preset) · react-hook-form + zod · sonner
 
