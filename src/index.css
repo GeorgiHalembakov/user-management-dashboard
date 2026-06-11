@@ -128,3 +128,11 @@
     @apply font-sans;
     }
 }
+@layer base {
+  /* Tailwind v4 preflight leaves buttons with the native default cursor;
+     restore pointer on enabled interactive controls. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
