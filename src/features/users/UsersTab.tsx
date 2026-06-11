@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { fetchUsers } from "@/lib/mock-users";
 import type { UserFormValues } from "@/lib/user-schema";
-import type { User } from "@/types/user";
+import type { Status, User } from "@/types/user";
+import { DeleteUserDialog } from "./DeleteUserDialog";
 import { UserFormDialog } from "./UserFormDialog";
 import { UserTable } from "./UserTable";
 import { UserToolbar } from "./UserToolbar";
@@ -29,6 +30,7 @@ export function UsersTab() {
   const [page, setPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
   const load = useCallback(async () => {
     dispatch({ type: "LOAD_START" });
@@ -86,9 +88,26 @@ export function UsersTab() {
     [editingUser]
   );
 
-  // Status toggle and delete flows are separate tasks; the wiring is in place.
-  const handleToggleStatus = useCallback((_user: User) => {}, []);
-  const handleDelete = useCallback((_user: User) => {}, []);
+  const handleToggleStatus = useCallback((user: User) => {
+    const status: Status = user.status === "Active" ? "Inactive" : "Active";
+    dispatch({ type: "UPDATE_USER", user: { ...user, status } });
+    toast(status === "Active" ? "User activated" : "User deactivated");
+  }, []);
+
+  const handleDelete = useCallback((user: User) => setDeletingUser(user), []);
+
+  const handleConfirmDelete = useCallback((user: User) => {
+    dispatch({ type: "DELETE_USER", id: user.id });
+    setDeletingUser(null);
+    toast("User deleted", {
+      duration: 10_000,
+      action: {
+        // Re-adds the original object, so id and createdAt are preserved.
+        label: "Undo",
+        onClick: () => dispatch({ type: "ADD_USER", user }),
+      },
+    });
+  }, []);
 
   const visibleUsers = useMemo(
     () => sortUsers(filterUsers(state.users, filters), nameSort),
@@ -160,6 +179,13 @@ export function UsersTab() {
         onOpenChange={setDialogOpen}
         user={editingUser}
         onSubmit={handleFormSubmit}
+      />
+      <DeleteUserDialog
+        user={deletingUser}
+        onOpenChange={(open) => {
+          if (!open) setDeletingUser(null);
+        }}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );

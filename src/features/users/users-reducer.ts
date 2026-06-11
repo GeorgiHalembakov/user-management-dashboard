@@ -11,7 +11,8 @@ export type UsersAction =
   | { type: "LOAD_SUCCESS"; users: User[] }
   | { type: "LOAD_ERROR"; error: string }
   | { type: "ADD_USER"; user: User }
-  | { type: "UPDATE_USER"; user: User };
+  | { type: "UPDATE_USER"; user: User }
+  | { type: "DELETE_USER"; id: string };
 
 export const initialUsersState: UsersState = {
   status: "loading",
@@ -34,5 +35,7 @@ export function usersReducer(state: UsersState, action: UsersAction): UsersState
         ...state,
         users: state.users.map((u) => (u.id === action.user.id ? action.user : u)),
       };
+    case "DELETE_USER":
+      return { ...state, users: state.users.filter((u) => u.id !== action.id) };
   }
 }

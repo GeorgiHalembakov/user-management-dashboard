@@ -116,6 +116,7 @@ export function UserTable({
                       variant="ghost"
                       size="icon-sm"
                       aria-label={`Actions for ${fullName}`}
+                      data-actions-for={user.id}
                     >
                       <Ellipsis />
                     </Button>
