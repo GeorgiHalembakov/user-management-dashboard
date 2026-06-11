@@ -29,11 +29,16 @@ export function DeleteUserDialog({ user, onOpenChange, onConfirm }: DeleteUserDi
     <AlertDialog open={user !== null} onOpenChange={onOpenChange}>
       <AlertDialogContent
         onCloseAutoFocus={(event) => {
-          // On cancel/Esc, return focus to the row's "⋯" button. After a
+          // On cancel/Esc, return focus to the row's "⋯" button. The table and
+          // card list each render one, so pick the visible one. After a
           // confirmed delete the row is gone, so fall through to the default.
           const trigger = shown
-            ? document.querySelector<HTMLElement>(`[data-actions-for="${shown.id}"]`)
-            : null;
+            ? Array.from(
+                document.querySelectorAll<HTMLElement>(
+                  `[data-actions-for="${shown.id}"]`
+                )
+              ).find((el) => el.offsetParent !== null)
+            : undefined;
           if (trigger) {
             event.preventDefault();
             trigger.focus();

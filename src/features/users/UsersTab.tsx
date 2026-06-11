@@ -7,6 +7,7 @@ import { fetchUsers } from "@/lib/mock-users";
 import type { UserFormValues } from "@/lib/user-schema";
 import type { Status, User } from "@/types/user";
 import { DeleteUserDialog } from "./DeleteUserDialog";
+import { UserCardList } from "./UserCardList";
 import { UserFormDialog } from "./UserFormDialog";
 import { UserTable } from "./UserTable";
 import { UserToolbar } from "./UserToolbar";
@@ -156,14 +157,24 @@ export function UsersTab() {
       ) : (
         <>
           <div className="overflow-hidden rounded-xl border">
-            <UserTable
-              users={pageUsers}
-              nameSort={nameSort}
-              onToggleSort={handleToggleSort}
-              onEdit={handleEdit}
-              onToggleStatus={handleToggleStatus}
-              onDelete={handleDelete}
-            />
+            <div className="hidden md:block">
+              <UserTable
+                users={pageUsers}
+                nameSort={nameSort}
+                onToggleSort={handleToggleSort}
+                onEdit={handleEdit}
+                onToggleStatus={handleToggleStatus}
+                onDelete={handleDelete}
+              />
+            </div>
+            <div className="md:hidden">
+              <UserCardList
+                users={pageUsers}
+                onEdit={handleEdit}
+                onToggleStatus={handleToggleStatus}
+                onDelete={handleDelete}
+              />
+            </div>
           </div>
           <UsersPagination
             page={currentPage}

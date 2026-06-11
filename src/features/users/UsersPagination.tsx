@@ -25,11 +25,14 @@ export function UsersPagination({
       <p className="text-sm text-muted-foreground">
         Showing {start}–{end} of {totalCount} users
       </p>
+      {/* The ::after overlays pad touch targets to ≥44px below md without
+          changing the visual size. */}
       <nav aria-label="Pagination" className="flex items-center gap-1">
         <Button
           variant="ghost"
           size="sm"
           disabled={page === 1}
+          className="relative max-md:after:absolute max-md:after:-inset-y-2 max-md:after:inset-x-0"
           onClick={() => onPageChange(page - 1)}
         >
           <ChevronLeft />
@@ -42,6 +45,7 @@ export function UsersPagination({
             size="icon-sm"
             aria-label={`Page ${p}`}
             aria-current={p === page ? "page" : undefined}
+            className="relative max-md:after:absolute max-md:after:-inset-2"
             onClick={() => onPageChange(p)}
           >
             {p}
@@ -51,6 +55,7 @@ export function UsersPagination({
           variant="ghost"
           size="sm"
           disabled={page === pageCount}
+          className="relative max-md:after:absolute max-md:after:-inset-y-2 max-md:after:inset-x-0"
           onClick={() => onPageChange(page + 1)}
         >
           Next

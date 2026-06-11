@@ -44,7 +44,7 @@ export function UserToolbar({ filters, onFiltersChange, onAddUser }: UserToolbar
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <InputGroup className="w-full max-w-64">
+      <InputGroup className="w-full md:max-w-64">
         <InputGroupAddon>
           <Search />
         </InputGroupAddon>

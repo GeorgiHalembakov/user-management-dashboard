@@ -1,25 +1,9 @@
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  Ellipsis,
-  Pencil,
-  Trash2,
-  UserCheck,
-  UserX,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { InitialsAvatar } from "@/components/InitialsAvatar";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TeamBadges } from "@/components/TeamBadges";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -35,6 +19,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { User } from "@/types/user";
+import { UserActionsMenu } from "./UserActionsMenu";
 import type { NameSortDirection } from "./user-filters";
 
 interface UserTableProps {
@@ -110,33 +95,12 @@ export function UserTable({
                 <StatusBadge status={user.status} />
               </TableCell>
               <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      aria-label={`Actions for ${fullName}`}
-                      data-actions-for={user.id}
-                    >
-                      <Ellipsis />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-44">
-                    <DropdownMenuItem onSelect={() => onEdit(user)}>
-                      <Pencil />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => onToggleStatus(user)}>
-                      {user.status === "Active" ? <UserX /> : <UserCheck />}
-                      {user.status === "Active" ? "Deactivate" : "Activate"}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem variant="destructive" onSelect={() => onDelete(user)}>
-                      <Trash2 />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <UserActionsMenu
+                  user={user}
+                  onEdit={onEdit}
+                  onToggleStatus={onToggleStatus}
+                  onDelete={onDelete}
+                />
               </TableCell>
             </TableRow>
           );
