@@ -43,7 +43,9 @@ export function UserTable({
     nameSort === "asc" ? ArrowUp : nameSort === "desc" ? ArrowDown : ArrowUpDown;
 
   return (
-    <Table>
+    // Fixed layout: column widths come from the header row, so they stay
+    // identical across pages regardless of cell content.
+    <Table className="min-w-2xl table-fixed">
       <TableHeader>
         <TableRow>
           <TableHead
@@ -54,16 +56,17 @@ export function UserTable({
                   ? "descending"
                   : "none"
             }
+            className="w-44"
           >
             <Button variant="ghost" size="sm" className="-ml-2.5" onClick={onToggleSort}>
               User
               <SortIcon className={cn(nameSort === null && "text-muted-foreground")} />
             </Button>
           </TableHead>
-          <TableHead>Phone</TableHead>
-          <TableHead>Teams</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="w-36">Phone</TableHead>
+          <TableHead className="w-44">Teams</TableHead>
+          <TableHead className="w-16">Role</TableHead>
+          <TableHead className="w-24">Status</TableHead>
           <TableHead className="w-12">
             <span className="sr-only">Actions</span>
           </TableHead>
@@ -77,7 +80,7 @@ export function UserTable({
               <TableCell>
                 <div className="flex items-center gap-3">
                   <InitialsAvatar user={user} />
-                  <div className="min-w-0 max-w-56">
+                  <div className="min-w-0 flex-1">
                     <TruncatedText text={fullName} className="font-medium" />
                     <TruncatedText
                       text={user.email}
