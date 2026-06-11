@@ -1,10 +1,22 @@
-import { useCallback, useEffect, useReducer } from "react";
-import { CircleAlert } from "lucide-react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { CircleAlert, SearchX } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchUsers } from "@/lib/mock-users";
 import type { User } from "@/types/user";
+import { UserTable } from "./UserTable";
+import { UserToolbar } from "./UserToolbar";
+import { UsersPagination } from "./UsersPagination";
+import {
+  EMPTY_FILTERS,
+  filterUsers,
+  sortUsers,
+  type NameSortDirection,
+  type UserFilters,
+} from "./user-filters";
+
+const PAGE_SIZE = 10;
 
 interface UsersState {
   status: "loading" | "error" | "success";
@@ -38,6 +50,9 @@ function usersReducer(state: UsersState, action: UsersAction): UsersState {
 
 export function UsersTab() {
   const [state, dispatch] = useReducer(usersReducer, initialState);
+  const [filters, setFilters] = useState<UserFilters>(EMPTY_FILTERS);
+  const [nameSort, setNameSort] = useState<NameSortDirection | null>(null);
+  const [page, setPage] = useState(1);
 
   const load = useCallback(async () => {
     dispatch({ type: "LOAD_START" });
@@ -56,6 +71,33 @@ export function UsersTab() {
     void load();
   }, [load]);
 
+  const handleFiltersChange = useCallback((next: UserFilters) => {
+    setFilters(next);
+    setPage(1);
+  }, []);
+
+  const handleToggleSort = useCallback(() => {
+    setNameSort((d) => (d === "asc" ? "desc" : "asc"));
+  }, []);
+
+  // Add/Edit/Status/Delete dialogs are separate tasks; the wiring is in place.
+  const handleAddUser = useCallback(() => {}, []);
+  const handleEdit = useCallback((_user: User) => {}, []);
+  const handleToggleStatus = useCallback((_user: User) => {}, []);
+  const handleDelete = useCallback((_user: User) => {}, []);
+
+  const visibleUsers = useMemo(
+    () => sortUsers(filterUsers(state.users, filters), nameSort),
+    [state.users, filters, nameSort]
+  );
+
+  const pageCount = Math.max(1, Math.ceil(visibleUsers.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const pageUsers = visibleUsers.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
   if (state.status === "loading") return <UsersSkeleton />;
 
   if (state.status === "error") {
@@ -73,7 +115,44 @@ export function UsersTab() {
     );
   }
 
-  return <pre>Loaded {state.users.length} users</pre>;
+  return (
+    <div className="flex flex-col gap-4">
+      <UserToolbar
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onAddUser={handleAddUser}
+      />
+      {visibleUsers.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-16 text-center">
+          <SearchX className="size-8 text-muted-foreground" aria-hidden="true" />
+          <p className="text-sm text-muted-foreground">No users match your filters</p>
+          <Button variant="outline" onClick={() => handleFiltersChange(EMPTY_FILTERS)}>
+            Clear filters
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="overflow-hidden rounded-xl border">
+            <UserTable
+              users={pageUsers}
+              nameSort={nameSort}
+              onToggleSort={handleToggleSort}
+              onEdit={handleEdit}
+              onToggleStatus={handleToggleStatus}
+              onDelete={handleDelete}
+            />
+          </div>
+          <UsersPagination
+            page={currentPage}
+            pageCount={pageCount}
+            totalCount={visibleUsers.length}
+            pageSize={PAGE_SIZE}
+            onPageChange={setPage}
+          />
+        </>
+      )}
+    </div>
+  );
 }
 
 function UsersSkeleton() {
